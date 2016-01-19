@@ -24,6 +24,7 @@ public class DataManager : MonoBehaviour {
 	public RectTransform graphPanel;// reference to panel transform graph is drawn within
 	public Transform nodeParent;	// reference for parenting purposes for each year's node objects
 	public GameObject nodePrefab;	// prefab to use for showing year/people nodes
+	public Text highText;
 	[Space(5f)]
 	public Text maxPeople;			// object reference for naming/positioning
 	public Text midPeople;			// object reference for naming/positioning
@@ -185,6 +186,8 @@ public class DataManager : MonoBehaviour {
 
 		// simple log output
 		//Debug.Log("Year: " + (data.x+limits.x).ToString() + "\n" + "People Alive: " + (data.y).ToString());
+		if (highText == null) return;
+		highText.text = ("Year: " + (data.x+limits.x).ToString() + "\n" + "High: " + (data.y).ToString());
 
 		// ensure objects are assigned in inspector
 		if (graphPanel == null) return;
@@ -200,7 +203,8 @@ public class DataManager : MonoBehaviour {
 
 		// ensure objects are assigned
 		if (nodeParent == null || nodes == null) return;
-
+		// store x-axis position for aligning year ID
+		float xPos = (min.x+max.x)*0.5f;
 		// create new node points and place them on the graph
 		for (int i = 0; i < years.Length; i++) {
 			// light max year green
@@ -212,7 +216,7 @@ public class DataManager : MonoBehaviour {
 			yVal = Mathf.Clamp01(((float)years[i])/data.y);
 
 			// 2D pixel positioning
-			x = (width*xVal)+min.x;
+			x = xPos = (width*xVal)+min.x;
 			y = (height*yVal)+min.y;
 			nodes[i].anchoredPosition = new Vector2(x, y);
 			nodes[i].transform.SetParent(nodeParent);
@@ -225,6 +229,7 @@ public class DataManager : MonoBehaviour {
 		minYear.text = ((int)limits.x).ToString();
 		minYear.rectTransform.anchoredPosition = new Vector2(min.x, minYear.rectTransform.anchoredPosition.y);
 		midYear.text = ((int)((limits.x+limits.y)*0.5f)).ToString();
+		//midYear.rectTransform.anchoredPosition = new Vector2(xPos, midYear.rectTransform.anchoredPosition.y);
 		maxYear.text = ((int)limits.y).ToString();
 		maxYear.rectTransform.anchoredPosition = new Vector2(max.x, maxYear.rectTransform.anchoredPosition.y);
 
